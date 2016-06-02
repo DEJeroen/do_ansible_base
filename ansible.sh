@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-apt-add-repository -y ppa:ansible/ansible
-apt-get update
-apt-get -y install ansible sshpass
+yes | pacman -Suy
+yes | pacman -S ansible sshpass
 
 ln -sf /vagrant/hosts /etc/ansible/hosts
 

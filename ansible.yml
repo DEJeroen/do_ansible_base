@@ -3,7 +3,7 @@
   sudo: yes
   tasks:
       - name: Install ansible.
-        apt: name={{ item }} state=present update_cache=yes
+        pacman: name={{ item }} state=present update_cache=yes
         with_items:
             - ansible
 

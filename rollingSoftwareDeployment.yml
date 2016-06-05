@@ -1,0 +1,68 @@
+---
+
+# common
+- hosts: all
+  sudo: yes
+
+  tasks:
+
+  - name: install git
+    action: pacman name=git state=installed update_cache=yes
+
+# web
+- hosts: webservers
+  sudo: yes
+  serial: 1
+
+  pre_tasks:
+
+  - name: disable server in haproxy
+    shell: echo "disable server episode46/{{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
+    delegate_to: "{{ item }}"
+    with_items: groups.lb
+
+  tasks:
+
+  - name: install apache
+    action: pacman name=apache state=installed
+
+
+
+  - name: deploy website content
+    git: repo=https://github.com/DEJeroen/do_ansible_base.git
+         dest=/var/www
+
+  handlers:
+
+
+  post_tasks:
+
+  - name: enable server in haproxy
+    shell: echo "enable server episode46/{{ inventory_hostname }}" | socat stdio /var/lib/haproxy/stats
+    delegate_to: "{{ item }}"
+    with_items: groups.lb
+
+# rp
+- hosts: rp
+  sudo: yes  
+
+  tasks:
+
+  - name: Download and install haproxy and socat
+    pacman: pkg={{ item }} state=latest
+    with_items:
+    - haproxy
+    - socat
+
+  - name: Enable HAProxy
+    lineinfile: dest=/etc/default/haproxy regexp="^ENABLED" line="ENABLED=1"
+    notify: restart haproxy 
+
+  - name: Configure the haproxy cnf file with hosts
+    template: src=haproxy.cfg dest=/etc/haproxy/haproxy.cfg
+    notify: restart haproxy
+
+  handlers:
+
+  - name: restart haproxy
+    service: name=haproxy state=restarted

@@ -36,6 +36,7 @@ Vagrant.configure(2) do |config|
         mgr.vm.network :private_network, ip: "192.168.2.6"
         mgr.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         mgr.vm.network :forwarded_port, guest: 22, host: 6666, auto_correct: true
+        mgr.vm.provision "shell", inline: 'rm -r /var/cache/pacman && ln -s /vagrant/pacman /var/cache/'
         mgr.vm.provision "shell", inline: 'while [ true ]; do echo "vagrant"; done | sudo passwd vagrant'
         mgr.vm.provision  "shell", path: "ansible.sh"
     end

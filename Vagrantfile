@@ -12,6 +12,8 @@ Vagrant.configure(2) do |config|
         www1.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         www1.vm.network :forwarded_port, guest: 22, host: 3333, auto_correct: true
         www1.vm.provision "shell", inline: 'while [ true ]; do echo "vagrant"; done | sudo passwd vagrant'
+        www1.vm.provision "shell", inline: 'rm -r /var/cache/pacman && ln -s /vagrant/pacman /var/cache/'
+        www1.vm.provision "shell", inline: 'yes | pacman -Suy'
     end
 
     config.vm.define "www2" do |www2|
@@ -20,6 +22,8 @@ Vagrant.configure(2) do |config|
         www2.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh", disabled: true
         www2.vm.network :forwarded_port, guest: 22, host: 4444, auto_correct: true
         www2.vm.provision "shell", inline: 'while [ true ]; do echo "vagrant"; done | sudo passwd vagrant'
+        www2.vm.provision "shell", inline: 'rm -r /var/cache/pacman && ln -s /vagrant/pacman /var/cache/'
+        www2.vm.provision "shell", inline: 'yes | pacman -Suy'
     end
 
     config.vm.define "rp" do |www2|
@@ -29,6 +33,8 @@ Vagrant.configure(2) do |config|
         www2.vm.network :forwarded_port, guest: 22, host: 5555, auto_correct: true
         www2.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
         www2.vm.provision "shell", inline: 'while [ true ]; do echo "vagrant"; done | sudo passwd vagrant'
+        www2.vm.provision "shell", inline: 'rm -r /var/cache/pacman && ln -s /vagrant/pacman /var/cache/'
+        www2.vm.provision "shell", inline: 'yes | pacman -Suy'
     end
 
     config.vm.define "mgr" do |mgr|

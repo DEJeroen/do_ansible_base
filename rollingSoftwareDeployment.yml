@@ -31,7 +31,7 @@
 
   - name: deploy website content
     git: repo=https://github.com/DEJeroen/do_ansible_base.git
-         dest=/var/www
+         dest=/srv/httpd
 
   handlers:
 
